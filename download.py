@@ -35,7 +35,7 @@ def parse_catalogue(file):
 def download_with_retries(url, filepath, max_retries=3, delay=3):
     for attempt in range(1, max_retries + 1):
         try:
-            response = requests.get(url, stream=True, timeout=20)
+            response = requests.get(url, stream=True, timeout=30 * attempt)
             response.raise_for_status()
             with open(filepath, "wb") as f:
                 f.write(response.content)
