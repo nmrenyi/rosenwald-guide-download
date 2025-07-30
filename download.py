@@ -36,8 +36,8 @@ def download_files(file_urls):
 
 def main():
     catalogue_url = 'https://gallica.bnf.fr/ark:/12148/cb344120051/date'
-    catelogue_file = get_catalogue(catalogue_url)
-    file_urls = parse_catalogue(catelogue_file)
+    catalogue_file = get_catalogue(catalogue_url)
+    file_urls = parse_catalogue(catalogue_file)
     download_files(file_urls)
 
 if __name__ == "__main__":
