@@ -1,6 +1,8 @@
 import requests
-import json
+from tqdm import tqdm
 import re
+import os
+import time
 
 def get_catalogue(url):
     # use wget to download the catalogue file
@@ -29,8 +31,51 @@ def parse_catalogue(file):
     assert len(matches) == len(results), "Mismatch in number of matches and results"
     return results
 
-def download_files(file_urls):
-    pass
+
+def download_with_retries(url, filepath, max_retries=3, delay=1):
+    for attempt in range(1, max_retries + 1):
+        try:
+            response = requests.get(url, stream=True, timeout=20)
+            response.raise_for_status()
+            with open(filepath, "wb") as f:
+                f.write(response.content)
+            return True
+        except requests.RequestException as e:
+            print(f"Attempt {attempt} failed for {filepath}: {e}")
+            if attempt < max_retries:
+                backoff = delay * (2 ** (attempt - 1))
+                print(f"Retrying in {backoff:.1f} seconds...")
+                time.sleep(backoff)
+            else:
+                print(f"Failed to download {filepath} after {max_retries} attempts.")
+                return False
+
+def download_files(file_urls, delay=1, max_retries=3):
+    # Create folders if they don't exist
+    os.makedirs("pdfs", exist_ok=True)
+    os.makedirs("txts", exist_ok=True)
+
+    for file in tqdm(file_urls, desc="Downloading files", unit="file"):
+        year = file.get('year')
+        base_url = file.get('url')
+
+        if not year or not base_url:
+            print("Skipping due to missing 'year' or 'url'.")
+            continue
+
+        # PDF
+        pdf_url = f"{base_url}.pdf"
+        pdf_path = os.path.join("pdfs", f"{year}.pdf")
+        download_with_retries(pdf_url, pdf_path, max_retries, delay)
+
+        time.sleep(delay)
+
+        # TXT
+        txt_url = f"{base_url}.texteBrut"
+        txt_path = os.path.join("txts", f"{year}.txt")
+        download_with_retries(txt_url, txt_path, max_retries, delay)
+
+        time.sleep(delay)
 
 
 
