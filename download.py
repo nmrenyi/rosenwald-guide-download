@@ -32,7 +32,7 @@ def parse_catalogue(file):
     return results
 
 
-def download_with_retries(url, filepath, max_retries=3, delay=1):
+def download_with_retries(url, filepath, max_retries=3, delay=3):
     for attempt in range(1, max_retries + 1):
         try:
             response = requests.get(url, stream=True, timeout=20)
@@ -50,7 +50,7 @@ def download_with_retries(url, filepath, max_retries=3, delay=1):
                 print(f"Failed to download {filepath} after {max_retries} attempts.")
                 return False
 
-def download_files(file_urls, delay=1, max_retries=3):
+def download_files(file_urls, delay=3, max_retries=3):
     # Create folders if they don't exist
     os.makedirs("pdfs", exist_ok=True)
     os.makedirs("txts", exist_ok=True)
