@@ -1,6 +1,9 @@
+import requests
 
 def get_catalogue(url):
-    pass
+    # use wget to download the catalogue file
+    response = requests.get(url)
+    return response.text
 
 def parse_catalogue(file):
     pass
