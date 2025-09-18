@@ -1,5 +1,5 @@
 pdfs/
-txts/
+# txts/
 .DS_Store
 
 # Byte-compiled / optimized / DLL files
